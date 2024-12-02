@@ -50,6 +50,65 @@ class StudentProductivityToolkit:
     def exit_app(self):
         if messagebox.askyesno("Keluar", "Yakin ingin keluar dari aplikasi?"):
             self.root.destroy()
+
+class ToDoFrame(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.pack(fill="both", expand=True, padx=10, pady=10)
+
+        ttk.Label(self, text="To-Do List", font=("Arial", 16)).grid(row=0, column=0, columnspan=2, pady=10)
+
+        self.listbox = tk.Listbox(self, width=40, height=10, selectmode=tk.SINGLE)
+        self.listbox.grid(row=1, column=0, columnspan=2)
+
+        self.entry = ttk.Entry(self, width=30)
+        self.entry.grid(row=2, column=0, pady=5)
+
+        ttk.Button(self, text="Tambah", command=self.add_task).grid(row=2, column=1, pady=5)
+        ttk.Button(self, text="Hapus", command=self.delete_task).grid(row=3, column=1, pady=5)
+        ttk.Button(self, text="Selesaikan", command=self.complete_task).grid(row=4, column=0, pady=5)
+        ttk.Button(self, text="Hapus Semua", command=self.clear_all).grid(row=4, column=1, pady=5)
+
+        self.load_tasks()
+
+    def add_task(self):
+        task = self.entry.get().strip()
+        if task:
+            self.listbox.insert(tk.END, task)
+            self.entry.delete(0, tk.END)
+            self.save_tasks()
+
+    def delete_task(self):
+        try:
+            selected_task = self.listbox.curselection()[0]
+            self.listbox.delete(selected_task)
+            self.save_tasks()
+        except IndexError:
+            messagebox.showerror("Error", "Pilih tugas untuk dihapus")
+
+    def complete_task(self):
+        try:
+            selected_task = self.listbox.curselection()[0]
+            self.listbox.itemconfig(selected_task, {'bg':'lightgreen'})  # Menandai tugas yang selesai
+            self.save_tasks()
+        except IndexError:
+            messagebox.showerror("Error", "Pilih tugas untuk ditandai selesai")
+
+    def clear_all(self):
+        if messagebox.askyesno("Hapus Semua", "Yakin ingin menghapus semua tugas?"):
+            self.listbox.delete(0, tk.END)
+            self.save_tasks()
+
+    def save_tasks(self):
+        tasks = self.listbox.get(0, tk.END)
+        with open("tasks.json", "w") as file:
+            json.dump(tasks, file)
+
+    def load_tasks(self):
+        if os.path.exists("tasks.json"):
+            with open("tasks.json", "r") as file:
+                for task in json.load(file):
+                    self.listbox.insert(tk.END, task)
             
 class QuoteFrame(ttk.Frame):
     def __init__(self, parent):
