@@ -50,7 +50,8 @@ class StudentProductivityToolkit:
     def exit_app(self):
         if messagebox.askyesno("Keluar", "Yakin ingin keluar dari aplikasi?"):
             self.root.destroy()
-#TIMER BELAJAR
+
+# TIMER BELAJAR
 class TimerFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -82,7 +83,7 @@ class TimerFrame(ttk.Frame):
             time.sleep(1)
         self.time_label.config(text="Waktu habis!")
 
-#CATATAN HARIAN
+# CATATAN HARIAN
 class NotesFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -108,7 +109,7 @@ class NotesFrame(ttk.Frame):
             with open("notes.txt", "r") as file:
                 self.text_area.insert(tk.END, file.read())
 
-#TO-DO LIST
+# TO - DO LIST
 class ToDoFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -199,7 +200,7 @@ class ToDoFrame(ttk.Frame):
                 for task in json.load(file):
                     self.listbox.insert(tk.END, task)
 
-#MOTIVATIONAL QUOTE GENERATOR
+# MOTIVATIONAL QUOTE GENERATOR
 class QuoteFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -212,8 +213,6 @@ class QuoteFrame(ttk.Frame):
 
         ttk.Button(self, text="Tampilkan Kutipan", command=self.show_quote).grid(row=2, column=0, pady=5)
 
-
-
     def show_quote(self):
         quotes = [
             "Believe in yourself!",
@@ -223,13 +222,8 @@ class QuoteFrame(ttk.Frame):
             "The future depends on what you do today."
         ]
         self.quote_label.config(text=random.choice(quotes))
-    
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = StudentProductivityToolkit(root)
-    root.mainloop()
 
-#KALKULATOR SEDERHANA
+# KALKULATOR SEDERHANA
 class CalculatorFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
