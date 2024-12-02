@@ -50,7 +50,65 @@ class StudentProductivityToolkit:
     def exit_app(self):
         if messagebox.askyesno("Keluar", "Yakin ingin keluar dari aplikasi?"):
             self.root.destroy()
+#TIMER BELAJAR
+class TimerFrame(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.pack(fill="both", expand=True, padx=10, pady=10)
 
+        ttk.Label(self, text="Timer Belajar", font=("Arial", 16)).grid(row=0, column=0, columnspan=2, pady=10)
+
+        ttk.Label(self, text="Durasi (detik):").grid(row=1, column=0, sticky="e")
+        self.entry = ttk.Entry(self, width=10)
+        self.entry.grid(row=1, column=1, sticky="w")
+        self.entry.insert(0, "0")
+
+        self.start_button = ttk.Button(self, text="Mulai", command=self.start_timer)
+        self.start_button.grid(row=2, column=0, columnspan=2, pady=5)
+
+        self.time_label = ttk.Label(self, text="", font=("Arial", 14))
+        self.time_label.grid(row=3, column=0, columnspan=2, pady=10)
+
+    def start_timer(self):
+        try:
+            duration = int(self.entry.get())
+            threading.Thread(target=self.run_timer, args=(duration,)).start()
+        except ValueError:
+            messagebox.showerror("Error", "Masukkan angka yang valid")
+
+    def run_timer(self, duration):
+        for i in range(duration, -1, -1):
+            self.time_label.config(text=f"Waktu tersisa: {i} detik")
+            time.sleep(1)
+        self.time_label.config(text="Waktu habis!")
+
+#CATATAN HARIAN
+class NotesFrame(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.pack(fill="both", expand=True, padx=10, pady=10)
+
+        ttk.Label(self, text="Catatan Harian", font=("Arial", 16)).grid(row=0, column=0, pady=10)
+
+        self.text_area = tk.Text(self, height=15, width=50)
+        self.text_area.grid(row=1, column=0, pady=10)
+
+        self.load_notes()
+
+        ttk.Button(self, text="Simpan", command=self.save_notes).grid(row=2, column=0, pady=5)
+        
+    def save_notes(self):
+        notes = self.text_area.get("1.0", tk.END).strip()
+        with open("notes.txt", "w") as file:
+            file.write(notes)
+        messagebox.showinfo("Info", "Catatan berhasil disimpan")
+
+    def load_notes(self):
+        if os.path.exists("notes.txt"):
+            with open("notes.txt", "r") as file:
+                self.text_area.insert(tk.END, file.read())
+
+#TO-DO LIST
 class ToDoFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -141,7 +199,7 @@ class ToDoFrame(ttk.Frame):
                 for task in json.load(file):
                     self.listbox.insert(tk.END, task)
 
-            
+#MOTIVATIONAL QUOTE GENERATOR
 class QuoteFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -171,6 +229,7 @@ if __name__ == "__main__":
     app = StudentProductivityToolkit(root)
     root.mainloop()
 
+#KALKULATOR SEDERHANA
 class CalculatorFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
