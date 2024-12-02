@@ -54,61 +54,93 @@ class StudentProductivityToolkit:
 class ToDoFrame(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
+        # Mengatur frame agar dapat mengisi seluruh ruang yang tersedia
         self.pack(fill="both", expand=True, padx=10, pady=10)
 
+        # Menambahkan label "To-Do List" di bagian atas
         ttk.Label(self, text="To-Do List", font=("Arial", 16)).grid(row=0, column=0, columnspan=2, pady=10)
 
+        # Menambahkan listbox untuk menampilkan daftar tugas
         self.listbox = tk.Listbox(self, width=40, height=10, selectmode=tk.SINGLE)
         self.listbox.grid(row=1, column=0, columnspan=2)
 
+        # Menambahkan entry field untuk input tugas baru
         self.entry = ttk.Entry(self, width=30)
         self.entry.grid(row=2, column=0, pady=5)
 
+        # Menambahkan tombol "Tambah" untuk menambah tugas baru
         ttk.Button(self, text="Tambah", command=self.add_task).grid(row=2, column=1, pady=5)
+
+        # Menambahkan tombol "Hapus" untuk menghapus tugas yang dipilih
         ttk.Button(self, text="Hapus", command=self.delete_task).grid(row=3, column=1, pady=5)
+
+        # Menambahkan tombol "Selesaikan" untuk menandai tugas yang selesai
         ttk.Button(self, text="Selesaikan", command=self.complete_task).grid(row=4, column=0, pady=5)
+
+        # Menambahkan tombol "Hapus Semua" untuk menghapus semua tugas
         ttk.Button(self, text="Hapus Semua", command=self.clear_all).grid(row=4, column=1, pady=5)
 
+        # Memuat tugas yang telah disimpan sebelumnya saat aplikasi dijalankan
         self.load_tasks()
 
     def add_task(self):
+        # Mengambil teks dari entry field dan menghapus spasi ekstra
         task = self.entry.get().strip()
         if task:
+            # Menambahkan tugas ke listbox jika ada input
             self.listbox.insert(tk.END, task)
+            # Mengosongkan entry field setelah tugas ditambahkan
             self.entry.delete(0, tk.END)
+            # Menyimpan daftar tugas setelah penambahan
             self.save_tasks()
 
     def delete_task(self):
         try:
+            # Mengambil indeks tugas yang dipilih
             selected_task = self.listbox.curselection()[0]
+            # Menghapus tugas yang dipilih dari listbox
             self.listbox.delete(selected_task)
+            # Menyimpan perubahan setelah menghapus tugas
             self.save_tasks()
         except IndexError:
+            # Menampilkan pesan error jika tidak ada tugas yang dipilih
             messagebox.showerror("Error", "Pilih tugas untuk dihapus")
 
     def complete_task(self):
         try:
+            # Mengambil indeks tugas yang dipilih
             selected_task = self.listbox.curselection()[0]
-            self.listbox.itemconfig(selected_task, {'bg':'lightgreen'})  # Menandai tugas yang selesai
+            # Menandai tugas yang selesai dengan mengubah latar belakangnya menjadi hijau muda
+            self.listbox.itemconfig(selected_task, {'bg':'lightgreen'})
+            # Menyimpan perubahan setelah menandai tugas selesai
             self.save_tasks()
         except IndexError:
+            # Menampilkan pesan error jika tidak ada tugas yang dipilih
             messagebox.showerror("Error", "Pilih tugas untuk ditandai selesai")
 
     def clear_all(self):
+        # Menanyakan konfirmasi dari pengguna sebelum menghapus semua tugas
         if messagebox.askyesno("Hapus Semua", "Yakin ingin menghapus semua tugas?"):
+            # Menghapus semua tugas di listbox
             self.listbox.delete(0, tk.END)
+            # Menyimpan perubahan setelah menghapus semua tugas
             self.save_tasks()
 
     def save_tasks(self):
+        # Mengambil semua tugas dari listbox dan menyimpannya dalam bentuk list
         tasks = self.listbox.get(0, tk.END)
+        # Menyimpan daftar tugas ke file JSON
         with open("tasks.json", "w") as file:
             json.dump(tasks, file)
 
     def load_tasks(self):
+        # Mengecek apakah file tasks.json ada
         if os.path.exists("tasks.json"):
+            # Membaca file tasks.json dan memuat tugas-tugas yang ada ke listbox
             with open("tasks.json", "r") as file:
                 for task in json.load(file):
                     self.listbox.insert(tk.END, task)
+
             
 class QuoteFrame(ttk.Frame):
     def __init__(self, parent):
